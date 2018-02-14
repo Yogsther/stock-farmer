@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <title>StockFarmer</title>
+    <script src="items.js"></script>
+</head>
+
+<body>
+  <div id="wrap">
+    <img src="logo.png" id="logo">
+    <span id="stats">
+    
+    <img src="textures/gold.png" class="coin"> 0  <br> 
+      <img src="textures/silver.png" class="coin"> <span id="silver-value">0</span><span id="outof">/50 </span>
+    </span>
+    
+    <img id="arrow" draggable="false" src="textures/miner-arrow.png" onclick="mine()">
+    
+    <img id="silver-mine" src="textures/silver_stage_0.png">
+    
+    <div id="control-panel">
+      <button class="btn menubuttons">Market</button><br>
+      <button class="btn menubuttons" onclick="openInventory()">Inventory</button><br>
+      <button class="btn menubuttons" onclick="overlayCrateStore()">Crate Store</button>
+    </div>
+    
+    <span id="overlay">
+    </span>
+    
+    <span id="crate-opener-overlay">
+      
+    </span>
+    
+  </div>
+  <script src="stock.js"></script>
+</body>
+</html>

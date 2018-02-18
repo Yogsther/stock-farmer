@@ -255,6 +255,9 @@ input:focus {outline:0;}
   border: none;
   background: none;
   color: white;
+  top: 50px;
+  left: 50px;
+  position: absolute;
 }
 
 
@@ -286,9 +289,6 @@ input{
   padding: 6px;
   width: 250px;
   border-radius: 5px;
-  top: 50px;
-  left: 50px;
-  position: absolute;
   border: none;
   background: none;
   color: white;
@@ -353,7 +353,7 @@ input{
   width: 0%;
   background: #53d655;
   position: absolute;
-  transition: all 3s linear;
+  transition: all 2.8s linear;
 }
 
 .loading-after{
@@ -371,11 +371,47 @@ input{
 }
 
 
+#signup-page{
+  width: 400px;
+  margin: 0 auto;
+  display: block;
+  position: relative;
+  top: 20px;
+}
 
+#signup-logo{
+  height: 200px;
+  margin: 0 auto;
+  display: block;
+}
 
+#welcome-text{
+  font-size: 20px;
+  text-align: center;
+  margin: 0 auto;
+  display: block;
+}
 
+.login-input{
+  position: relative;
+  margin: 0 auto;
+  position: relative;
+  display: block;
+  margin-bottom: 20px;
+  
+}
 
+#signup-button{
+  position: relative;
+  float: right;
 
+}
+
+#already-a-member-link{
+  position: relative;
+  float: right;
+  
+}
 
 
 

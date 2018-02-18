@@ -84,7 +84,7 @@ function itemFromCode(code) {
   return false;
 }
 
-const alpha = "abcdefghijklmnopqrstuvwxyz0123456789<-+!#_:;".split("");
+
 
 function randomBoolean() {
   if (Math.random() > 0.5) return true;
@@ -123,43 +123,44 @@ function openCrate(id) {
   for (let i = 0; i < amountOfItems; i++) {
     var item = finalItems[i];
     var itemName = item.name.split("");
-    for (var l = 0; l < itemName.length; l++) {
-      itemName[l] = alpha[Math.floor(Math.random() * alpha.length)];
-      if (randomBoolean()) itemName[l] = itemName[l].toUpperCase();
-    }
+
     itemName = itemName.join("");
-    console.log("Added: " + "new-item-" + i);
-    document.getElementById("crate-open-background").innerHTML += '<span class="new-item" id="new-item-' + i + '" style="color:' + rareities[item.rarity] + ';">' + itemName + '</span>';
+    document.getElementById("crate-open-background").innerHTML += '<span class="new-item" id="new-item-' + i + '" style="color:' + rareities[item.rarity] + ';">' + encryptText(itemName) + '</span>';
   }
 
   var totalLengtht = 0;
   for (let i = 0; i < finalItems.length; i++) {
     totalLengtht += finalItems[i].name.length
   }
-  var time = 5000 / totalLengtht;
+
   var progression = 0;
-  var itemIndex = 0; 
-  
-  setInterval(function () {
-    if(progression > document.getElementById("new-item-"+itemIndex).innerHTML.length){
-      progression = 1;
+  var itemIndex = 0;
+
+  var openAnimation = setInterval(function () {
+    if (progression > 10) {
+      progression = 0;
+      document.getElementById("new-item-" + itemIndex).innerHTML = finalItems[itemIndex].name;
       itemIndex++;
-      if(itemIndex >= finalItems.length){
-        console.warn("break");
-        clearInterval(this)
-      }
     }
-    
-    var past = document.getElementById("new-item-"+itemIndex).innerHTML;
-    document.getElementById("new-item-"+itemIndex).innerHTML = finalItems[itemIndex].name.substr(0, progression) + past.substr(progression, past.length-1)
-    
+    try {
+      document.getElementById("new-item-" + itemIndex).innerHTML = encryptText(finalItems[itemIndex].name);
+    } catch (e) {
+      clearInterval(openAnimation);
+    }
     progression++;
-  }, time);
+  }, 50);
 
+}
 
+const alpha = "abcdefghijklmnopqrstuvwxyz0123456789#!".split("");
 
-  console.log(finalItems);
-
+function encryptText(text) {
+  text = text.split("");
+  for (var l = 0; l < text.length; l++) {
+    text[l] = alpha[Math.floor(Math.random() * alpha.length)];
+    if (randomBoolean()) text[l] = text[l].toUpperCase();
+  }
+  return text.join("");
 }
 
 
@@ -235,7 +236,6 @@ function overlayCrateStore() {
 
 function animateSilver() {
   var id = "particle_" + Date.now();
-  console.log("Spawned with id: " + id);
   document.getElementById("wrap").innerHTML += '<img class="silver-particle" id="' + id + '" src="textures/silver.png">';
   setTimeout(function () {
     document.getElementById(id).classList.toggle("silver-particle-after");

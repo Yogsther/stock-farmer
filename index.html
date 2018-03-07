@@ -6,9 +6,13 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <title>StockFarmer</title>
   <script src="items.js"></script>
+  <link rel="shortcut icon" href="favicon.ico" type="icon.ico">
+  <!-- Socket.io -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
 </head>
 
 <body>
+   
   <div id="wrap">
     <img src="logo.png" id="logo">
     <span id="stats">
@@ -17,9 +21,8 @@
       <img src="textures/silver.png" class="coin"> <span id="silver-value">0</span><span id="outof">/50 </span>
     </span>
 
-    <img id="arrow" draggable="false" src="textures/miner-arrow.png" onclick="mine()">
+    <canvas id="canvas" height="410" width="670"></canvas>
 
-    <img id="silver-mine" src="textures/silver_stage_0.png">
 
     <div id="control-panel">
       <button class="btn menubuttons" disabled>Market</button><br>
@@ -28,17 +31,6 @@
     </div>
 
     <span id="overlay">
-      
-      <div id="overlay-block">
-        <div id="signup-page">
-          <img src="logo.png" id="signup-logo">
-          <span id="welcome-text">Welcome, please sign up to play!</span><br>
-          <input id="username" class="login-input" placeholder="Username">
-          <input id="pin" class="login-input" placeholder="Pin" type="password">
-          <a href="" id="already-a-member-link">Already a memeber?</a><br>
-          <button class="btn" id="signup-button">Sign up!</button>
-        </div>
-      </div>
     
     </span>
 

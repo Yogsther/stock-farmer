@@ -1,3 +1,7 @@
+/*
+  All CSS for Stock Farmer
+*/
+
 *{
   font-family: 'Roboto', sans-serif;
   color: white;
@@ -7,13 +11,59 @@ body{
   background: #111;
 }
 
+#canvas{
+  float: right;
+  display: block;
+  cursor: pointer;
+  position: relative;
+  top: -10px;
+}
+
 #wrap{
-  width: 1200px;
+  width: 920px;
   margin: 0 auto;
   display: block;
+  top: 30px;
   position: relative;
 }
 
+/* Main overlay */
+#overlay-block{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 900px;
+  height: 500px;
+  background: rgba(0,0,0,0.95);
+  border-radius: 5px;
+  box-shadow: 0px 0px 20px black;
+}
+
+#control-panel{
+  height: 300px;
+  width: 300px;
+  position: absolute;
+  left: 10px;
+  top: 200px;
+}
+
+#logo{
+  position: absolute;
+  top: -20px;
+  left: 000px;
+  height: 120px;
+}
+
+#stats{
+  display: block;
+  height: 200px;
+  position: absolute;
+  width: 200px;
+  top: 100px;
+  left: 20px;
+  font-size: 30px;
+  transition: all 1s;
+}
 
 img {
   -webkit-user-select: none;
@@ -25,49 +75,8 @@ img {
   user-drag: none;
 }
 
-#logo{
-  position: absolute;
-  top: -40px;
-  left: 200px;
-  height: 160px;
-}
 
-#arrow{
-  height: 300px;
-  margin: 0 auto;
-  position: relative;
-  display: block;
-  margin-top: 50px;
-  transition: top 0.05s;
-  top: 0px;
-  cursor: pointer;
-}
 
-#arrow:hover{
-  top: -15px;
-}
-
-#arrow:active{
-  top: 15px;
-}
-
-#silver-mine{
-  position: relative;
-  margin: 0 auto;
-  display: block;
-  top: -56px;
-  height: 150px;
-}
-
-#stats{
-  display: block;
-  height: 200px;
-  position: absolute;
-  width: 200px;
-  right: 0px;
-  font-size: 30px;
-  transition: all 1s;
-}
 
 #outof{
   font-size: 18px;
@@ -96,13 +105,7 @@ img {
   right: 165px;
 }
 
-#control-panel{
-  height: 300px;
-  width: 300px;
-  position: absolute;
-  right: 20px;
-  top: 150px;
-}
+
 
 .menubuttons{
   float:left;
@@ -141,23 +144,13 @@ img {
 button:focus {outline:0;}
 input:focus {outline:0;}
 
-#overlay-block{
-  position: absolute;
-  top: 10px;
-  left: 150px;
-  width: 900px;
-  height: 500px;
-  background: rgba(0,0,0,0.9);
-  border-radius: 10px;
-  box-shadow: 0px 0px 20px black;
-}
 
 #item-list{
   height: 310px;
   position: absolute;
   top: 100px;
   left: 50px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
   width: 30%;
   border-radius: 5px;
   overflow-x: hidden;
@@ -179,7 +172,7 @@ input:focus {outline:0;}
   position: absolute;
   top: 50px;
   right: 50px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
   width: 54%;
   border-radius: 5px;
 }
@@ -401,16 +394,25 @@ input{
   
 }
 
-#signup-button{
+.signup-button{
   position: relative;
-  float: right;
-
+  
 }
 
-#already-a-member-link{
+#signerbuttons{
+  display: block;
   position: relative;
-  float: right;
-  
+  width: 255px;
+  margin: 0 auto;
+}
+
+#error_login{
+  position: relative;
+  display: block;
+  margin: 0 auto;
+  color: #f25e5e;
+  width: 300px;
+  top: 10px;
 }
 
 

@@ -1,5 +1,6 @@
 # stock-farmer
-Farm resources in this idle clicker and then trade it on the online market.
+Farm silver by sorting gems from the Mine, then buy crates with the silver.
+Earn gold by selling and buying items from the market.
 
 Try it out: https://yogsther.github.io/stock-farmer/
 

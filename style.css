@@ -11,6 +11,17 @@ body{
   background: #111;
 }
 
+::-webkit-scrollbar{
+  background-color: black;
+  width: 8px;
+  border-radius: 1px;
+}
+
+::-webkit-scrollbar-thumb{
+  background-color: #3a3a3a;
+  border-radius: 3px;
+}
+
 #canvas{
   float: right;
   display: block;
@@ -25,6 +36,17 @@ body{
   display: block;
   top: 30px;
   position: relative;
+}
+
+#crate-open-background{
+  height: 500px;
+  width: 400px;
+  top: 10px;
+  left: 260px;
+  position: absolute;
+  background: rgba(0,0,0,1);
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px black;
 }
 
 /* Main overlay */
@@ -313,16 +335,7 @@ input{
   font-size: 20px;
 }
 
-#crate-open-background{
-  height: 500px;
-  width: 400px;
-  top: 10px;
-  left: 400px;
-  position: absolute;
-  background: rgba(0,0,0,1);
-  border-radius: 10px;
-  box-shadow: 0px 0px 20px black;
-}
+
 
 #opening-status{
   font-size: 30px;

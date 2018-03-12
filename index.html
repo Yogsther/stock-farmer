@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto|Ubuntu:700" rel="stylesheet">
   <title>StockFarmer</title>
   <script src="items.js"></script>
   <link rel="shortcut icon" href="favicon.ico" type="icon.ico">
@@ -22,9 +22,8 @@
       <img src="textures/silver.png" class="coin">
       <span id="silver-value">0</span>
     </span>
-
+    
     <canvas id="canvas" height="410" width="670"></canvas>
-
 
     <div id="control-panel">
       <button class="btn menubuttons" disabled>Market</button>
@@ -34,15 +33,27 @@
       <button class="btn menubuttons" onclick="overlayCrateStore()">Crate Store</button>
     </div>
 
-    <span id="overlay">
+    <div id="accountInfo">
+      <span id="accountName"></span> <a href="javascript:logout()">Logout</a>
+    </div>
 
+    <span id="overlay">
     </span>
 
     <span id="crate-opener-overlay">
+    </span>
 
+    <span id="server-loading-overlay-hold">
+      <div id="server-loading-overlay">
+        <video id="loadingvideo" height="150" autoplay loop>
+            <source src="video/loading-animation.mp4" type="video/mp4">
+        </video>
+        <span id="connecting-message">Connecting to LivingforIt Servers...</span>
+      </div>
     </span>
 
   </div>
+  <span id="black-overlay-insert"><div id="black-overlay"></div></span>
   <script src="stock.js"></script>
 </body>
 

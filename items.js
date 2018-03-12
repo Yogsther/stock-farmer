@@ -1,3 +1,7 @@
+/**
+ * Items for Stock Farmer (Client copy)
+ */
+
 var items = [{
   name: "Golden Watch",
   rarity: 4,
@@ -6,7 +10,7 @@ var items = [{
   useable: false,
   description: "Expensive and rare watch only for the richest of the richest. The ultimate status symbol!"
 }, {
-  name: "Beta Crate", // Todo add image
+  name: "Beta Crate",
   rarity: 0,
   code: "crate_0",
   price: 50,
@@ -52,7 +56,7 @@ var items = [{
   useable: false,
   description: "'Do you have the bird?' 🤔"
 }, {
-  name: "😂",
+  name: "😂 (Laughing Crying Emoji)",
   rarity: 4,
   marketable: true,
   code: "the_joy",

@@ -1,13 +1,49 @@
+
 /**
- * Stock Farmer - v.0.2
+ * Stock Farmer - v.0.4
  * Client Side Main Script
  * Yogsther 2018
  */
 
 /* Import socket */
-//var socket = io.connect("213.66.254.63:25565"); TODO UNCOMMENT
+var socket = io.connect("localhost:25565");
+
+var logins = {
+  username: readCookie("username"),
+  pin: readCookie("pin")
+}
+
+/* Connect to the server */
+socket.connect();
+initWaitOnConnectionMessage();
+
+function initWaitOnConnectionMessage() {
+  setTimeout(function () {
+    /* If the client has not connected for 3 seconds, display an error message. */
+    if (socket.disconnected) {
+      document.getElementById("connecting-message").innerHTML = "It's taking longer than usual to connect.<br> The servers might be down."
+    }
+  }, 3000);
+}
+
+socket.on("connect", function () {
+  console.log("Connected to LivingforIt Servers.");
+  /* Set a timeout for removing the login screen, otherwise nobody will see it.
+   * This could possible be an unlockable feature, to get faster loading times.
+   */
+  setTimeout(function () {
+    removeLoadingScreen();
+    autoLogin();
+  }, 1000);
+});
+
+socket.on("disconnect", function () {
+  document.getElementById("server-loading-overlay-hold").innerHTML = '<div id="server-loading-overlay"> <video id="loadingvideo" height="150" autoplay loop> <source src="video/loading-animation.mp4" type="video/mp4"> </video> <span id="connecting-message">Connecting to LivingforIt Servers...</span> </div>';
+  initWaitOnConnectionMessage();
+});
 
 var silver = 0;
+var gold = 0;
 
 var backgroundColors = ["#384459", "#633434", "#34634e", "#63344d"];
 
@@ -129,9 +165,16 @@ document.addEventListener("keydown", function (e) {
       picked = false;
       activeGem.active = false;
       if (colorOrder[i] == activeGem.name) {
-        giveSilver(1);
+        //giveSilver(1);
         oneUpEffect(activeGem.name)
         successDrop();
+        socket.emit("sort", {
+          username: logins.username,
+          pin: logins.pin,
+          gemType: activeGem.name,
+          dropLocation: colorOrder[i],
+          multiplier: multiplier
+        });
       } else {
         failedDrop();
       }
@@ -163,9 +206,16 @@ function drop() {
     if (mousePos.x > 444.5) pick = "blue";
 
     if (pick == activeGem.name) {
-      giveSilver(1);
+      //giveSilver(1);
       oneUpEffect(pick);
       successDrop();
+      socket.emit("sort", {
+        username: logins.username,
+        pin: logins.pin,
+        gemType: activeGem.name,
+        dropLocation: pick,
+        multiplier: multiplier
+      });
       return;
     }
   }
@@ -246,7 +296,8 @@ function spawnText(color, x1, x2) {
     x: xPosition,
     y: 142,
     color: color,
-    opacity: 1
+    opacity: 1,
+    thenMultipleir: multiplier
   });
 }
 
@@ -323,22 +374,23 @@ function render() {
   ctx.drawImage(texture_outline, 0, 0);
 
   /* Draw multiplier status bar */
-  ctx.fillStyle = "grey";
+  ctx.fillStyle = "#262626";
   ctx.fillRect(607.5, 67, 60, 50);
 
-
-
-  var multiplierColor = "#fff"
+  var multiplierColor = "#606060"
   window.multiplier = 1;
   multiplierPercent = multiplierStatus * 100;
-  multiplierStatus -= 0.002 * (multiplierPercent / 30);
+  var minus = 0.002 * (multiplierPercent / 30);
+  if (minus < 0.001) minus = 0.001;
+  multiplierStatus -= minus;
+
 
 
   if (multiplierPercent > 100) multiplierPercent = 100; /* Lock */
 
   var stages = [{
     multiplier: 1,
-    color: "#fff",
+    color: "#d6d6d6",
     percent: 0
   }, {
     multiplier: 2,
@@ -361,19 +413,18 @@ function render() {
     percent: 9999
   }]
 
-
-  for(let i = 0; i < stages.length; i++){
-    if(multiplierPercent > stages[i].percent && multiplierPercent < stages[i+1].percent){
+  for (let i = 0; i < stages.length; i++) {
+    if (multiplierPercent > stages[i].percent && multiplierPercent < stages[i + 1].percent) {
       multiplierColor = stages[i].color;
       multiplier = stages[i].multiplier;
-      if(lastStage < i){
-        if(stages[i].sound.paused){
-        stages[i].sound.volume = 0.5;
-        stages[i].sound.currentTime = 0;
-        stages[i].sound.play();
-      }
-      } else if(lastStage > i && lastStage == 3){
-        stages[i+1].sound.pause();
+      if (lastStage < i) {
+        if (stages[i].sound.paused) {
+          stages[i].sound.volume = 0.5;
+          stages[i].sound.currentTime = 0;
+          stages[i].sound.play();
+        }
+      } else if (lastStage > i && lastStage == 3) {
+        stages[i + 1].sound.pause();
       }
       lastStage = i;
       break;
@@ -382,9 +433,9 @@ function render() {
 
   var lastMultiplier = multiplier;
   var statusWidth = 230 * (multiplierPercent * 0.01);
-  
-  if(statusWidth > lastDisplayedStatusBar) lastDisplayedStatusBar += 5;
-  if(statusWidth < lastDisplayedStatusBar) lastDisplayedStatusBar = statusWidth;
+
+  if (statusWidth > lastDisplayedStatusBar) lastDisplayedStatusBar += 5;
+  if (statusWidth < lastDisplayedStatusBar) lastDisplayedStatusBar = statusWidth;
 
   /* Render status bar */
   ctx.fillRect(430, 26, 244, 30);
@@ -396,6 +447,7 @@ function render() {
 
   ctx.drawImage(texture_statusbar, 0, 0)
 
+  /* Render out oneUps */
   for (let i = 0; i < activeOneUps.length; i++) {
     /* Move the one up */
     activeOneUps[i].opacity -= .02;
@@ -405,9 +457,10 @@ function render() {
     } else {
       /* Render one up */
       ctx.fillStyle = activeOneUps[i].color;
+      if(activeOneUps[i].thenMultipleir == 15) ctx.fillStyle = "#ffc832"; 
       ctx.globalAlpha = activeOneUps[i].opacity;
-      ctx.font = "20px Ubuntu";
-      ctx.fillText("+" + (1 * multiplier), activeOneUps[i].x, activeOneUps[i].y);
+      ctx.font = 20 + "px Ubuntu";
+      ctx.fillText("+" + (1 * activeOneUps[i].thenMultipleir), activeOneUps[i].x, activeOneUps[i].y);
     }
   }
   ctx.globalAlpha = 1;
@@ -422,33 +475,65 @@ function render() {
 
 window.onload = function () {
   /* Add items for debugging */
-  for (let i = 0; i < items.length; i++) {
+  /* for (let i = 0; i < items.length; i++) {
     inventory[i] = 10;
-  }
+  } */
   render();
-  //loadPrePage();
 }
 
-function loadPrePage() {
+function showLogin() {
   /* Load login and signup page */
-  document.getElementById("overlay").innerHTML = '<div id="overlay-block"> <div id="signup-page"> <img src="logo.png" id="signup-logo"> <span id="welcome-text">Welcome, please sign up or login to play!</span><br> <input id="username" class="login-input" oninput="checkUsername()" placeholder="Username" title="This will be your Display name and login-name! Only A-Z and Numbers allowed!" oninput="checkUsername()"> <input id="pin" title="(Must be numbers) Pin can be between 4-20 numbers long, this is your password." class="login-input" placeholder="Pin" type="password" oninput="checkUsername()"> <span id="signerbuttons"><button class="btn signup-button" id="signup-button" disabled>Sign up!</button> <button class="btn signup-button" id="login-button" disabled>Log in!</button></span><span id="error_login"></span> </div> </div>';
+  document.getElementById("overlay").innerHTML = '<div id="overlay-block"> <div id="signup-page"> <img src="logo.png" id="signup-logo"> <span id="welcome-text">Welcome, please sign up or login to play!</span><br> <input id="username" class="login-input" oninput="checkUsername()" placeholder="Username" title="This will be your Display name and login-name! Only A-Z and Numbers allowed!" oninput="checkUsername()"> <input id="pin" title="(Must be numbers) Pin can be between 3-100 numbers long, this is your password." class="login-input" placeholder="Pin" type="password" oninput="checkUsername()"> <span id="signerbuttons"><button class="btn signup-button" onclick="signupRequest()" id="signup-button" disabled>Sign up!</button> <button class="btn signup-button" id="login-button" onclick="clientInitiatedLogin()" disabled>Log in!</button></span><span id="error_login"></span> </div> </div>';
 }
+function hideLogin(){
+  document.getElementById("overlay").innerHTML = "";
+}
+
+function signupRequest() {
+
+  var username = document.getElementById("username").value;
+  var pin = document.getElementById("pin").value;
+
+  /*  Do all of this on server side instead, since it will be easier to display error messages for the client. 
+      Only one display system is needed.
+  */
+  //if(username !== username.replace(/[^a-z0-9]/gi,'')) return; /* Check if usenrame is alphanumeric */
+  if (pin == parseInt(pin)) pin = parseInt(pin); /* Make sure its a number that is sent if the user intended to have a numeric pin. */
+  //if(isNaN(pin)) return; /* Check if pin is a number */
+
+  socket.emit("signupReq", {
+    username: username,
+    pin: pin
+  });
+
+  window.logins = {
+    username: username,
+    pin: pin
+  }
+}
+
+socket.on("errorOnLogin", function (err) {
+  errorLoginMessage(err);
+})
 
 function checkUsername() {
+
+  document.getElementById("username").value = document.getElementById("username").value.replace(/[^a-z0-9]/gi, '');
+  if (document.getElementById("username").value.length > 30) {
+    document.getElementById("username").value = document.getElementById("username").value.substr(0, 30);
+  }
 
   if (document.getElementById("username").value == "" || document.getElementById("pin").value == "") {
     document.getElementById("signup-button").disabled = true;
     document.getElementById("login-button").disabled = true;
     return;
   }
-
   var username = document.getElementById("username").value;
   socket.emit("check_account", username);
 }
 
-/* socket.on("accountNameFree", function(callback){
-
-  if(callback){
+socket.on("accountNameFree", function (callback) {
+  if (callback) {
     // Username exists, allow login.
     document.getElementById("login-button").disabled = false;
     document.getElementById("signup-button").disabled = true;
@@ -459,7 +544,7 @@ function checkUsername() {
     document.getElementById("signup-button").disabled = false;
   }
 
-}); */
+});
 
 function errorLoginMessage(message) {
   document.getElementById("error_login").innerHTML = message;
@@ -475,7 +560,6 @@ function getCrateByID(id) {
 
 
 function giveSilver(amount) {
-  silver += amount * multiplier;
   document.getElementById("silver-value").style.fontSize = "40px";
   setTimeout(function () {
     document.getElementById("silver-value").style.fontSize = "30px";
@@ -510,6 +594,91 @@ function itemFromCode(code) {
 function randomBoolean() {
   if (Math.random() > 0.5) return true;
   return false;
+}
+
+function clientInitiatedLogin(){
+  logins.username = document.getElementById("username").value;
+  logins.pin = document.getElementById("pin").value;
+  createCookie("username", logins.username, 10000);
+  createCookie("pin", logins.pin, 10000);
+  login(logins.username, logins.pin);
+}
+
+function login(username, pin) {
+  socket.emit("login", {username: username, pin: pin})
+}
+
+function autoLogin() {
+  showLogin();
+  
+  window.logins = {
+    username: readCookie("username"),
+    pin: readCookie("pin")
+  }
+
+  if(logins.username != undefined && logins.pin != undefined){
+    document.getElementById("username").value = logins.username;
+    document.getElementById("pin").value = logins.pin;
+    
+    login(logins.username, logins.pin);
+  }
+}
+
+
+
+function logout(){
+  createCookie("username", "", 10000);
+  createCookie("pin", "", 1000);
+  autoLogin();
+}
+
+socket.on("loggedIn", function(account){
+  updateProfile(account);
+  hideLogin();
+});
+
+socket.on("update", function(account){
+  updateProfile(account);
+  console.log("update");
+})
+
+function updateProfile(account){
+  gold = account.gold;
+  silver = account.silver;
+  inventory = account.inventory;
+  updateStats();
+  document.getElementById("accountName").innerHTML = account.orignalUsername;
+}
+
+socket.on("successCreatedAccount", function(bool){
+  if(bool){
+    createCookie("username", logins.username, 10000);
+    createCookie("pin", logins.pin, 10000);
+    console.log("Get em");
+    autoLogin();
+  }
+})
+
+
+function createCookie(name, value, days) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+    expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+function readCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
 }
 
 function openCrate(id) {
@@ -657,6 +826,7 @@ function clearOveraly() {
 
 function updateStats() {
   document.getElementById("silver-value").innerHTML = silver;
+  //document.getElementById("gold-value").innerHTML = gold;
 }
 
 function getCrateIndexByID(id) {
@@ -694,3 +864,9 @@ document.addEventListener("keydown", function (e) {
     clearOveraly();
   }
 })
+
+
+function removeLoadingScreen() {
+  document.getElementById("server-loading-overlay-hold").innerHTML = "";
+  document.getElementById("black-overlay-insert").innerHTML = "";
+}

@@ -1,1 +1,1 @@
-{"username":"asd","pin":123,"inventory":{},"active":true,"timeCreated":1520816853194,"silver":22,"gold":0,"orignalUsername":"asd","savedName":"asd"}
+{"username":"asd","pin":123,"inventory":{},"active":true,"timeCreated":1520816853194,"silver":72,"gold":0,"orignalUsername":"asd","savedName":"asd"}

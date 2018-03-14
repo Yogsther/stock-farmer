@@ -639,7 +639,6 @@ socket.on("loggedIn", function(account){
 
 socket.on("update", function(account){
   updateProfile(account);
-  console.log("update");
 })
 
 function updateProfile(account){

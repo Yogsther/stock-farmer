@@ -9,23 +9,9 @@ Big scale todo:
  - [x] Create sorter (the minigame where you mine silver.)
  - [x] Inventory
  - [x] Crate store and system
- - [ ] Server and online accounts ( in progress )
- - [ ] Open public sign-up.
+ - [x] Server and online accounts ( in progress )
+ - [x] Open public sign-up.
  - [ ] Open the market
- - [ ] Finish online features
+ - [ ] Finish online features (Leaderboards, friendlists and more)
  - [ ] Add more items
  - [ ] More cosmetics: Sound effects and backgrounds.
- 
- 
-Small scale todo: 
- * Server side:
-    Signup and login features
-    Ban account option
-    Credit account with silver
-    Open crate function
-    Market
-    Leaderboards
-    Add streak counter
-
-Bugs: 
- * Spawned One Ups changes when multiplier changes.

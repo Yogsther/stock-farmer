@@ -50,6 +50,68 @@ body{
   box-shadow: 0px 0px 20px black;
 }
 
+#market-lister{
+  height: 500px;
+  width: 400px;
+  top: 10px;
+  left: 260px;
+  position: absolute;
+  background: rgba(0,0,0,.95);
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px black;
+  text-align: center;
+}
+
+#cancel-button{
+  display: block;
+  background: #dbdbdb;
+  box-shadow: 0px 6px 0px #aaaaaa;
+  color: #111;
+  position: relative;
+  top: 220px;
+  margin: 0 auto;
+}
+
+#smaller-header-lister{
+  font-size: 15px;
+  margin: 0 auto;
+  position: relative;
+  display: block;
+  text-align: center;
+  top: 60px;
+}
+
+#item-name-lister{
+  font-size: 30px;
+  margin: 0 auto;
+  position: relative;
+  display: block;
+  text-align: center;
+  top: 80px;
+}
+
+#asking-price-label{
+  position: relative;
+  top: 120px;
+}
+
+#list-button-final{
+  position: relative;
+  top: 200px;
+}
+
+
+#lister-value-amount{
+  z-index: 20;
+  top: 140px;
+  margin: 0 auto;
+  display: block;
+  text-align: center;
+  position: relative;
+  font-size: 30px;
+}
+
+
 /* Main overlay */
 #overlay-block{
   position: absolute;
@@ -262,10 +324,42 @@ input:focus {outline:0;}
 
 #value{
   display: block;
-  top: 250px;
+  bottom: 30px;
   position: absolute;
-  width: 85%;
+  width: 30%;
   left: 30px;
+}
+
+
+
+#listings{
+  position: absolute;
+  height: 220px;
+  top: 30px;
+  right: 30px;
+  border-radius: 5px;
+  background: rgba(0,0,0,0.5);
+  width: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#tiny-listing{
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 30px;
+  line-height: 28px;
+  background: rgba(255,255,255,0.1);
+  padding: 5px;
+  
+}
+
+#tiny-buy{
+  float: right;
+  padding-top: 0px;
+  padding-right: 17px;
+  color: #57e565;
 }
 
 #quicklist-button{
@@ -320,9 +414,29 @@ input:focus {outline:0;}
 #use-button{
   position: absolute;
   bottom: 10px;
-  right: 150px;
+  right: 190px;
 }
 
+#buy-button{
+  position: absolute !important;
+  top: 300px !important;
+  right: 20px !important;
+}
+
+#buy-crate-button{
+  position: relative !important;
+  margin: 0 auto;
+  display: block;
+  top: 20px;
+}
+
+#quantity{
+ position: absolute;
+ bottom: 15px;
+ right: 140px;
+ width: 80px;
+ height: 30px;
+}
 
 
 #crate-thumbnail{

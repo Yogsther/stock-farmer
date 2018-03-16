@@ -1,1 +1,0 @@
-{"username":"Olle","pin":123,"inventory":{},"active":true,"timeCreated":1520816274286,"silver":0,"gold":0,"orignalUsername":"Olle","savedName":"olle"}

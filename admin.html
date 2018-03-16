@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Give</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
+</head>
+
+<body>
+    <h4>Give item to account:</h4>
+    <input placeholder="Token" type="password" id="give-token">
+    <br>
+    <input type="text" placeholder="Username" id="give-username">
+    <br>
+    <input type="number" placeholder="Amount" id="give-amount">
+    <br>
+    <input type="text" placeholder="Item code" id="give-code">
+    <br>
+    <button onclick="give()"> Submit </button>
+    <br>
+    <span id="sent-status"></span>
+
+    <script>
+        var socket = io.connect("213.66.254.63:25565");
+        var sent = 0;
+
+
+  socket.emit("reqItems", true);
+
+  socket.on("items", function (newItems) {
+  window.items = newItems;
+})
+
+        function give() {
+
+            var code = document.getElementById("give-code").value;
+
+            socket.emit("give", {
+                username: document.getElementById("give-username").value,
+                token: document.getElementById("give-token").value,
+                amount: Number(document.getElementById("give-amount").value)    ,
+                id: getItemIndexFromCode(code)
+            });
+
+            function getItemIndexFromCode(code) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].code == code) {
+                        return i;
+                    }
+                }
+            }
+
+            sent++;
+            document.getElementById("sent-status").innerHTML = "Sent request (" + sent + ")";
+        }
+    </script>
+</body>
+
+</html>

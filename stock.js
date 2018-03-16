@@ -26,10 +26,10 @@ socket.on("connect", function () {
   setTimeout(function () {
     removeLoadingScreen();
     autoLogin()
-  }, 0)//1000)
+  }, 1000)
 });
 
-socket.on("items", function(newItems){
+socket.on("items", function (newItems) {
   items = newItems;
 })
 
@@ -91,6 +91,8 @@ var mousePos = {
   y: 0
 };
 var multiplierStatus = 0;
+
+
 canvas.addEventListener("mousedown", function (e) {
   mouseDown = !0;
   if (mousePos.x > 307.5 && mousePos.x < 354.5 && mousePos.y > 39 && mousePos.y < 97) {
@@ -130,8 +132,8 @@ document.addEventListener("keydown", function (e) {
       activeGem.active = !1;
       oneUpEffect(activeGem.name)
       animateStats()
-      if(activeGem.name === colorOrder[i]) multiplierStatus += 0.1;
-      if(activeGem.name !== colorOrder[i]) multiplierStatus = 0;
+      if (activeGem.name === colorOrder[i]) multiplierStatus += 0.1;
+      if (activeGem.name !== colorOrder[i]) multiplierStatus = 0;
       successDrop();
       socket.emit("sort", {
         username: logins.username,
@@ -165,8 +167,8 @@ function drop() {
     if (mousePos.x > 444.5) pick = "blue";
     oneUpEffect(pick);
     successDrop();
-    if(activeGem.name === pick) multiplierStatus += 0.15;
-    if(activeGem.name !== pick) multiplierStatus = 0;
+    if (activeGem.name === pick) multiplierStatus += 0.15;
+    if (activeGem.name !== pick) multiplierStatus = 0;
 
     socket.emit("sort", {
       username: logins.username,
@@ -370,11 +372,15 @@ window.onload = function () {
   render()
 }
 
+var showingLogin = false;
+
 function showLogin() {
+  showingLogin = true;
   document.getElementById("overlay").innerHTML = '<div id="overlay-block"> <div id="signup-page"> <img src="logo.png" id="signup-logo"> <span id="welcome-text">Welcome, please sign up or login to play!</span><br> <input id="username" class="login-input" oninput="checkUsername()" placeholder="Username" title="This will be your Display name and login-name! Only A-Z and Numbers allowed!" oninput="checkUsername()"> <input id="pin" title="(Must be numbers) Pin can be between 3-100 numbers long, this is your password." class="login-input" placeholder="Pin" type="password" oninput="checkUsername()"> <span id="signerbuttons"><button class="btn signup-button" onclick="signupRequest()" id="signup-button" disabled>Sign up!</button> <button class="btn signup-button" id="login-button" onclick="clientInitiatedLogin()" disabled>Log in!</button></span><span id="error_login"></span> </div> </div>'
 }
 
 function hideLogin() {
+  showingLogin = false;
   document.getElementById("overlay").innerHTML = ""
 }
 
@@ -395,6 +401,9 @@ socket.on("errorOnLogin", function (err) {
   errorLoginMessage(err)
 })
 
+
+var loginMode = false;
+
 function checkUsername() {
   document.getElementById("username").value = document.getElementById("username").value.replace(/[^a-z0-9]/gi, '');
   if (document.getElementById("username").value.length > 30) {
@@ -410,9 +419,11 @@ function checkUsername() {
 }
 socket.on("accountNameFree", function (callback) {
   if (callback) {
+    loginMode = false;
     document.getElementById("login-button").disabled = !1;
     document.getElementById("signup-button").disabled = !0
   } else {
+    loginMode = true
     document.getElementById("login-button").disabled = !0;
     document.getElementById("signup-button").disabled = !1
   }
@@ -437,14 +448,14 @@ function animateStats(amount) {
   updateStats()
 }
 
-function listItem(){
+function listItem() {
   overlayMarketLister();
   var item = items[currentInspect];
   document.getElementById("item-name-lister").innerHTML = item.name;
   document.getElementById("item-name-lister").style.color = rareities[item.rarity];
 }
 
-function listItemToMarket(){
+function listItemToMarket() {
   var askingPrice = document.getElementById("lister-value-amount").value;
   socket.emit("list", {
     itemID: currentInspect,
@@ -459,8 +470,8 @@ function listItemToMarket(){
 function openInventory() {
   document.getElementById("overlay").innerHTML = '<div id="overlay-block"> <input type="text" id="search" oninput="listItems()" placeholder="Search items"> <div id="item-list"> </div> <div id="inspector"> <span id="item-name">Item Name</span> <span id="item-description">Description</span> <span id="value">Market value: 3g</span> <button class="btn" onclick="use()" id="use-button" disabled title="Use this item.">Use Item</button><button class="btn" onclick="listItem()" title="List this item on the Market." id="quicklist-button">List on Market</button> </div> <button class="btn" id="backbutton" onclick="clearOveraly()">Return</button> </div>';
   listItems();
-  for(let i = 0; i < items.length; i++){
-    if(inventory[i] > 0){
+  for (let i = 0; i < items.length; i++) {
+    if (inventory[i] > 0) {
       inspect(i)
       return;
     }
@@ -581,7 +592,7 @@ function openCrate(id) {
 
 }
 
-socket.on("finalItems", function(finalItems){
+socket.on("finalItems", function (finalItems) {
   var amountOfItems = 5;
   for (let i = 0; i < amountOfItems; i++) {
     var item = finalItems[i];
@@ -619,9 +630,9 @@ socket.on("inventoryUpdate", newInventory => {
 
 
 socket.on("gold", gold => {
-  for(let i = 0; i < gold; i++){
-    setTimeout(function(){
-      if(Math.random() > .5){
+  for (let i = 0; i < gold; i++) {
+    setTimeout(function () {
+      if (Math.random() > .5) {
         sound_gold_0.currentTime = 0;
         sound_gold_0.volume = .4;
         sound_gold_0.play();
@@ -686,13 +697,21 @@ function listItems() {
   }
 }
 
+function getItemIndexFromCode(code){
+  for(var i = 0;i < items.length; i++){
+    if(items[i].code == code){
+      return i;
+    }
+  }
+}
+
 function buyCrate(id) {
   socket.emit("buyCrate", {
     crateID: id,
     username: logins.username,
     pin: logins.pin
   })
- 
+
 }
 
 socket.on("baught", account => {
@@ -702,7 +721,11 @@ socket.on("baught", account => {
 });
 
 function clearOveraly() {
-  socket.emit("update", {username: logins.username, pin: logins.pin});
+  showingLogin = false;
+  socket.emit("update", {
+    username: logins.username,
+    pin: logins.pin
+  });
   document.getElementById("overlay").innerHTML = ""
 }
 
@@ -717,7 +740,7 @@ function getCrateIndexByID(id) {
   }
 }
 
-function overlayMarketLister(){
+function overlayMarketLister() {
   document.getElementById("crate-opener-overlay").innerHTML = '<div id="market-lister"> <span id="smaller-header-lister">List an item on the market.</span> <span id="item-name-lister">Item Name</span> <span id="asking-price-label">Asking Price Gold:</span> <input type="number" id="lister-value-amount" placeholder="Asking price" value="10"> <button id="list-button-final" class="btn" onclick="listItemToMarket()" title="List the item on the market.">List on market</button><br> <button id="cancel-button" class="btn" onclick="clearUnbox()">Cancel</button> </div>';
 }
 
@@ -732,29 +755,69 @@ function overlayCrateStore() {
   document.getElementById("buy-crate-button").disabled = !(silver >= crate.price)
 }
 
-function overlayMarket(){
-  document.getElementById("overlay").innerHTML = '<div id="overlay-block"> <input type="text" id="search" oninput="fillMarketList()" placeholder="Search items"> <div id="item-list"> </div> <div id="inspector"> <span id="item-name">Item Name</span> <span id="item-description">Description</span> <span id="listings"> <span id="tiny-listing">30g <i>Yogsther</i> <a href="javascript:asd()" id="tiny-buy">Buy</a></span> </span> <span id="value">Market value: 3g</span> <input id="quantity" placeholder="Quantity" type="text"> <button class="btn" onclick="buy()" id="buy-button" title="Buy this item.">Buy Item</button> </div> <button class="btn" id="backbutton" onclick="clearOveraly()">Return</button> </div>';
+function overlayMarket() {
+  document.getElementById("overlay").innerHTML = '<div id="overlay-block"> <input type="text" id="search" oninput="fillMarketList()" placeholder="Search items"> <div id="item-list"> </div> <div id="inspector"> <span id="item-name">Item Name</span> <span id="item-description-market">Description</span> <span id="listings">  </span> <span id="value">Market value: 3g</span> <input id="quantity" placeholder="Quantity" type="text"> <button class="btn" onclick="buy()" id="buy-button" title="Buy this item.">Buy Item</button> </div> <button class="btn" id="backbutton" onclick="clearOveraly()">Return</button> </div>';
   socket.emit("fetchMarket");
 }
 
 var market = new Array();
 
 socket.on("market", newMarket => {
-  market = newMarket;
+
+  market = new Array(items.length);
+  for (let i = 0; i < market.length; i++) {
+    market[i] = new Array();
+  }
+
+  newMarket.forEach(item => {
+    market[item.itemID].push(item);
+  });
+
   fillMarketList();
 });
 
-function fillMarketList(){
+function fillMarketList() {
   var search = document.getElementById("search").value;
-  console.log(market);
+  var startedViewing = false;
   market.forEach(item => {
     if (item.length > 0) {
-      if (search == "" || items[i].name.toLowerCase().indexOf(search.toLowerCase()) != -1) {
-        document.getElementById("item-list").innerHTML += '<div class="list-pick" onclick="viewlisting(' + item.name + ')"> <span style="color:' + rareities[item.rarity] + ';" class="item-name-pick">' + item.name + '</span> <span class="item-value-pick">'+'</span> </div>'
+      var readyItem = items[item[0].itemID];
+      if (search == "" || readyItem.name.toLowerCase().indexOf(search.toLowerCase()) != -1) {
+        if(!startedViewing){
+          startedViewing = true;
+          viewlisting(item[0].itemID);
+        }
+        document.getElementById("item-list").innerHTML += '<div class="list-pick" onclick="viewlisting(' + item[0].itemID + ')"> <span style="color:' + rareities[readyItem.rarity] + ';" class="item-name-pick">' + readyItem.name + '</span> <span class="item-value-pick">' + '</span> </div>'
       }
-    }
+    } 
   })
 }
+
+
+function viewlisting(id){
+  var item = items[id];
+  window.currentInspect = id;
+  document.getElementById("item-name").innerHTML = "<span style='color:" + rareities[item.rarity] + "'>" + item.name + "</span>";
+  document.getElementById("item-description-market").innerHTML = item.description;
+  if (item.crateID != undefined) {
+    var itemsArray = getCrateItemsAsArray(item.crateID);
+    document.getElementById("item-description-market").innerHTML += "<br><br>Crate contains: "
+    for (let i = 0; i < itemsArray.length; i++) {
+      var displayItem = itemsArray[i]
+      document.getElementById("item-description-market").innerHTML += "<br><span style='color:" + rareities[displayItem.rarity] + ";'>" + displayItem.name + "</span>"
+    }
+  }
+
+  for(let i = 0; i < market[id].length; i++){
+
+    var listing = market[id][i];
+    document.getElementById("listings").innerHTML = "";
+    document.getElementById("listings").innerHTML +=  '<span id="tiny-listing">' + listing.price + 'G <i>' + listing.seller + '</i> <a href="javascript:purchase()" id="tiny-buy">Buy</a></span>';
+    
+     }
+
+  console.log("View ", items[id]);
+} 
 
 function animateSilver() {
   var id = "particle_" + Date.now();
@@ -767,6 +830,13 @@ document.addEventListener("keydown", function (e) {
   if (e.code == "Escape") {
     clearUnbox();
     clearOveraly()
+  }
+  if (e.code == "Enter" && showingLogin) {
+    if (loginMode) {
+      clientInitiatedLogin();
+    } else {
+      signupRequest();
+    }
   }
 })
 

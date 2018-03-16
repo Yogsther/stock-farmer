@@ -316,7 +316,19 @@ input:focus {outline:0;}
   position: absolute;
   width: 85%;
   left: 30px;
-  height: 150px;
+  height: 220px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-size: 20px;
+}
+
+#item-description-market{
+  display: block;
+  top: 70px;
+  position: absolute;
+  width: 45%;
+  left: 30px;
+  height: 220px;
   overflow-x: hidden;
   overflow-y: auto;
   font-size: 20px;

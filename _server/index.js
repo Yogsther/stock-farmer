@@ -251,6 +251,17 @@ io.on("connection", function (socket) {
     io.sockets.connected[socket.id].emit("items", items);
   })
 
+  socket.on("give", data => {
+    if(data.token == undefined) return;
+    var token = fs.readFileSync("token.txt", "utf8");
+    if(token === data.token){
+      var account = getActiveAccount(data.username);
+      if(account.inventory[data.id] == undefined) account.inventory[data.id] = 0;
+      account.inventory[data.id] += data.amount;
+      saveAccount(account);
+    }
+  });
+
 
   socket.on("fetchMarket", a => {
     io.sockets.connected[socket.id].emit("market", market);
@@ -418,16 +429,12 @@ function loadLeaderboards() {
     });
   })
 
-
-
   lastLoadedLB = Date.now();
 }
 
 
-
-
 function loadAllListings(){
-  market = new Array(items.length).fill(new Array()); 
+  market = new Array(); 
   fs.readdir("listings", function (err, filenames) {
     if (err) {
       log("Error reading directory of listings.");
@@ -435,13 +442,8 @@ function loadAllListings(){
     filenames.forEach(filename => {
       var listing = fs.readFileSync("listings/" + filename, "utf8");
       listing = JSON.parse(listing);
-      market[listing.itemID].push(listing);
-    });
-  });
-
-  market.forEach(item => {
-    market.sort(function (a, b) {
-      return b.price - a.price
+      listing.origin = filename;
+      market.push(listing);
     });
   });
 }
